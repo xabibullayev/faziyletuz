@@ -39,6 +39,7 @@ const uploadImage = (req, res, next) => {
     const upload = imageStore.array("images");
     upload(req, res, (err) => {
         if (err instanceof multer_1.default.MulterError) {
+            console.log(err);
             return res.status(400).json(err.message);
         }
         else if (err) {
