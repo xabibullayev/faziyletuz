@@ -49,6 +49,7 @@ export const uploadImage = (
 
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
+      console.log(err)
       return res.status(400).json(err.message);
     } else if (err) {
       if (err === "filetype") {
