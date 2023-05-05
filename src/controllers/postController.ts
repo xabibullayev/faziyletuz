@@ -1,6 +1,6 @@
 import Post from "../models/PostModel";
 import { Request, Response } from "express";
-import Image from "../models/ImageModel";
+import fs from "fs";
 
 //Get a post
 export const getPost = async (req: Request, res: Response) => {
@@ -17,7 +17,7 @@ export const getPost = async (req: Request, res: Response) => {
       return res.status(400).json("No post found for the given id!");
     }
 
-    res.status(400).json(category);
+    res.status(200).json(category);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);
@@ -60,7 +60,7 @@ export const addPost = async (req: Request, res: Response) => {
 
     await newPost.save();
 
-    res.status(400).json("Post has been created!");
+    res.status(200).json("Post has been created!");
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);
@@ -85,7 +85,7 @@ export const editPost = async (req: Request, res: Response) => {
       return res.status(400).json("No post found for the given id!");
     }
 
-    res.status(400).json("Post has been updated!");
+    res.status(200).json("Post has been updated!");
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);
@@ -96,6 +96,7 @@ export const editPost = async (req: Request, res: Response) => {
 export const deletePost = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    let message;
 
     //validate
     if (!id) {
@@ -105,12 +106,22 @@ export const deletePost = async (req: Request, res: Response) => {
     const existingPost = await Post.findById(id);
 
     if (!existingPost) {
-      return res.status(400).json("No post founf for the given id!");
+      return res.status(400).json("No post found for the given id!");
     }
 
-    res.status(400).json("Post has been deleted!");
+    if (existingPost.images) {
+      existingPost.images.map((img) => {
+        try {
+          fs.unlinkSync(`./public/images/${img}`);
+        } catch (err) {}
+      });
+    }
+
+    await existingPost.deleteOne();
+
+    res.status(200).json("Post has been deleted!");
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
-    res.status(500).json(message);
+    return res.status(500).json(message);
   }
 };

@@ -10,7 +10,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 //REGISTER A USER
 const register = async (req, res) => {
     try {
-        const { phone, password, role } = req.body;
+        const { phone, password, isAdmin } = req.body;
         //validation
         if (!phone || !password) {
             return res.status(400).json("Please enter all required fields!");
@@ -26,7 +26,7 @@ const register = async (req, res) => {
         const newUser = new UserModel_1.default({
             phone,
             password: hashedPassword,
-            role,
+            isAdmin,
         });
         await newUser.save();
         //response to client
@@ -61,10 +61,11 @@ const login = async (req, res) => {
         }
         const token = jsonwebtoken_1.default.sign({
             phone: user.phone,
+            isAdmin: user.isAdmin,
         }, jwt_secret);
         res
             .cookie("access_token", token)
-            .status(400)
+            .status(200)
             .json("Logged in succesfully!");
     }
     catch (err) {

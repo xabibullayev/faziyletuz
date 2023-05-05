@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const categoryController_1 = require("../controllers/categoryController");
+const verifyAdmin_1 = require("../middlewares/verifyAdmin");
+const verifyUser_1 = require("../middlewares/verifyUser");
 const router = (0, express_1.Router)();
-router.get("/:id", categoryController_1.getCategory);
-router.get("/", categoryController_1.getCategories);
-router.post("/", categoryController_1.addCategory);
-router.patch("/:id", categoryController_1.editCategory);
-router.delete("/:id", categoryController_1.deleteCategory);
+router.get("/:id", verifyUser_1.verifyUser, categoryController_1.getCategory);
+router.get("/", verifyUser_1.verifyUser, categoryController_1.getCategories);
+router.post("/", verifyUser_1.verifyUser, verifyAdmin_1.verifyAdmin, categoryController_1.addCategory);
+router.patch("/:id", verifyUser_1.verifyUser, verifyAdmin_1.verifyAdmin, categoryController_1.editCategory);
+router.delete("/:id", verifyUser_1.verifyUser, verifyAdmin_1.verifyAdmin, categoryController_1.deleteCategory);
 exports.default = router;

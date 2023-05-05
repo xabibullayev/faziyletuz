@@ -9,16 +9,25 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const authRouter_1 = __importDefault(require("./routes/authRouter"));
 const categoryRouter_1 = __importDefault(require("./routes/categoryRouter"));
 const postRouter_1 = __importDefault(require("./routes/postRouter"));
-const imageRouter_1 = __importDefault(require("./routes/imageRouter"));
 const cors_1 = __importDefault(require("cors"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 app.use(express_1.default.json());
 app.use("/public", express_1.default.static("public"));
+app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)({
     origin: ["http://localhost:3000"],
     credentials: true,
 }));
+process.on("uncaughtException", (ex) => {
+    console.log(ex.message, ex);
+    process.exit(1);
+});
+process.on("unhandledRejection", (ex) => {
+    console.log(ex.message, ex);
+    process.exit(1);
+});
 //connecting mongoose
 let mongoUrl = process.env.MONGO_URL;
 try {
@@ -34,9 +43,8 @@ catch (err) {
     console.log(message);
 }
 // routes
-app.use("/auth", authRouter_1.default);
-app.use("/categories", categoryRouter_1.default);
-app.use("/posts", postRouter_1.default);
-app.use("/images", imageRouter_1.default);
+app.use("/api/auth", authRouter_1.default);
+app.use("/api/categories", categoryRouter_1.default);
+app.use("/api/posts", postRouter_1.default);
 //listen specific port
 app.listen(5000, () => console.log("Server is running on port http://localhost:5000..."));

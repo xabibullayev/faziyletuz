@@ -13,7 +13,7 @@ export const getCategory = async (req: Request, res: Response) => {
 
     const category = await Category.findById(id);
 
-    res.status(400).json(category);
+    res.status(200).json(category);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);
@@ -25,7 +25,7 @@ export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = await Category.find();
 
-    res.status(400).json(categories);
+    res.status(200).json(categories);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);
@@ -54,7 +54,7 @@ export const addCategory = async (req: Request, res: Response) => {
 
     await newCategory.save();
 
-    res.status(400).json("Category has been created!");
+    res.status(200).json("Category has been created!");
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);
@@ -79,7 +79,7 @@ export const editCategory = async (req: Request, res: Response) => {
       return res.status(400).json("No category found for the given id!");
     }
 
-    res.status(400).json("Category has been updated!");
+    res.status(200).json("Category has been updated!");
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);
@@ -101,7 +101,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
       return res.status(400).json("No category founf for the given id!");
     }
 
-    res.status(400).json("Category has been deleted!");
+    res.status(200).json("Category has been deleted!");
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
     res.status(500).json(message);

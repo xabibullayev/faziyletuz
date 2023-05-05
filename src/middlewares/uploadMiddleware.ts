@@ -2,17 +2,21 @@ import multer from "multer";
 import path from "path";
 import { Request, Response, NextFunction } from "express";
 
-// Storage for document file
+//Storage for img files
 const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "./public/images");
+  destination: (re, file, cb) => {
+    cb(null, "./public/images");
   },
   filename: (req, file, callback) => {
     const temp_file_arr = file.originalname.split(".");
 
-    const temp_file_name = temp_file_arr[0];
+    let temp_file_name = temp_file_arr[0];
 
-    const temp_file_extension = temp_file_arr[1];
+    for (let i = 1; i < temp_file_arr.length - 1; i++) {
+      temp_file_name = temp_file_name + "." + temp_file_arr[i];
+    }
+
+    const temp_file_extension = temp_file_arr[temp_file_arr.length - 1];
 
     callback(
       null,
@@ -21,25 +25,16 @@ const storage = multer.diskStorage({
   },
 });
 
-// Store for document file
+// Store for img file
 const imageStore = multer({
   storage,
+
   fileFilter: (req, file, cb) => {
     checkFileType(file, cb);
   },
 });
 
-const checkFileType = (file: Express.Multer.File, cb: Function) => {
-  const filetypes = /jpg|jpeg|png/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
-  if (mimetype && extname) {
-    return cb(null, true);
-  }
-  cb("filetype");
-};
-
-// Upload document file
+// Upload img files
 export const uploadImage = (
   req: Request,
   res: Response,
@@ -49,16 +44,25 @@ export const uploadImage = (
 
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-      console.log(err)
       return res.status(400).json(err.message);
     } else if (err) {
       if (err === "filetype") {
         return res.status(400).json("Image files only!");
       }
 
-      return res.sendStatus(500);
+      return res.status(500).json(err.message);
     }
 
     next();
   });
+};
+
+const checkFileType = (file: Express.Multer.File, cb: Function) => {
+  const filetypes = /jpg|jpeg|png/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+  if (mimetype && extname) {
+    return cb(null, true);
+  }
+  cb("filetype");
 };

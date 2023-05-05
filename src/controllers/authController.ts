@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 //REGISTER A USER
 export const register = async (req: Request, res: Response) => {
   try {
-    const { phone, password, role } = req.body;
+    const { phone, password, isAdmin } = req.body;
 
     //validation
     if (!phone || !password) {
@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response) => {
     const newUser = new User({
       phone,
       password: hashedPassword,
-      role,
+      isAdmin,
     });
     await newUser.save();
 
@@ -68,13 +68,14 @@ export const login = async (req: Request, res: Response) => {
     const token = jwt.sign(
       {
         phone: user.phone,
+        isAdmin: user.isAdmin,
       },
       jwt_secret
     );
 
     res
       .cookie("access_token", token)
-      .status(400)
+      .status(200)
       .json("Logged in succesfully!");
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error!";
