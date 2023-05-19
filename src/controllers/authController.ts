@@ -74,10 +74,7 @@ export const login = async (req: Request, res: Response) => {
     );
 
     res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        sameSite: "lax",
-      })
+      .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json("Logged in succesfully!");
   } catch (err) {
