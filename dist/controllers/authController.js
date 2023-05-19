@@ -64,7 +64,7 @@ const login = async (req, res) => {
             isAdmin: user.isAdmin,
         }, jwt_secret);
         res
-            .cookie("access_token", token)
+            .cookie("access_token", token, { httpOnly: true })
             .status(200)
             .json("Logged in succesfully!");
     }
